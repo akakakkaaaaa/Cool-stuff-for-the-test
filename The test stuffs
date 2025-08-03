@@ -1,0 +1,92 @@
+-- Load Rayfield UI Library
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create Main Window
+local Window = Rayfield:CreateWindow({
+   Name = "Rayfield Test Script",
+   LoadingTitle = "Loading UI",
+   LoadingSubtitle = "Game Script",
+   ShowText = "Open UI", -- for mobile users to reopen the UI
+   Theme = "Default",
+   ToggleUIKeybind = "K",
+   ConfigurationSaving = {
+      Enabled = false
+   }
+})
+
+-- Create Tab and Section
+local Tab = Window:CreateTab("Test Hub", "terminal")
+local Section = Tab:CreateSection("Main Actions")
+
+-- Button: Choose Correct Number
+Tab:CreateButton({
+   Name = "Choose Correct Number",
+   Callback = function()
+      local Vote = game:GetService("ReplicatedStorage").Vote
+      for i = 1, 10 do
+         Vote:FireServer(i)
+         task.wait()
+      end
+   end
+})
+
+-- Button: 'Type' Correct Number
+Tab:CreateButton({
+   Name = "'Type' Correct Number",
+   Callback = function()
+      local Send = game:GetService("ReplicatedStorage").RemoteEvents.SendTotalNumber
+      for i = 1, 50 do
+         Send:FireServer(i)
+         task.wait()
+      end
+   end
+})
+
+-- Button: Win Drag Minigame
+Tab:CreateButton({
+   Name = "Win Drag Minigame",
+   Callback = function()
+      local DragWin = game:GetService("ReplicatedStorage").WonDragMinigame
+      DragWin:FireServer()
+   end
+})
+
+-- Textbox: Kill Player
+Tab:CreateInput({
+   Name = "Person to Kill",
+   PlaceholderText = "Enter username",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(value)
+      local playerChar = workspace:FindFirstChild(value)
+      if playerChar then
+         local Kill = game:GetService("ReplicatedStorage").Kill
+         Kill:FireServer(playerChar)
+      else
+         Rayfield:Notify({
+            Title = "Error",
+            Content = "Character not found in Workspace.",
+            Duration = 4
+         })
+      end
+   end
+})
+
+-- Textbox: Respawn Player
+Tab:CreateInput({
+   Name = "Person to Respawn",
+   PlaceholderText = "Enter username",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(value)
+      local player = game.Players:FindFirstChild(value)
+      if player then
+         local Respawn = game:GetService("ReplicatedStorage").RemoteEvents.Playerloadedin
+         Respawn:FireServer(player)
+      else
+         Rayfield:Notify({
+            Title = "Error",
+            Content = "Player not found in Players list.",
+            Duration = 4
+         })
+      end
+   end
+})
